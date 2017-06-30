@@ -81,7 +81,7 @@ sender | Json object | รายละเอียดผู้ส่ง <table><
 ```json
 {
   "error": {
-	  "message": "Packaging at least 1 required."
+      "message": "Packaging at least 1 required."
   }
 }
 ```
@@ -100,7 +100,7 @@ Params | DataType     |  Description
 -------- | ------------ | ------------
 order_no | String   |  order_no ที่ได้รับจาก /ext/orders
 weight | Number   |  น้ำหนักของสิ่งของ (หน่วยเป็นกรัม)
-service_type | Number |  ประเภทบริการ ต้องเป็นค่า 2572
+service_type | Number |  ประเภทบริการ ต้องเป็นค่า 2572 (EMS), 2639 (ลงทะเบียนในประเทศ), 2579 (พัสดุในประเทศ)
 items | Array   |  items ที่จะทำการบรรจุประกอบด้วย <table><tr><td>Params</td><td>Datatype</td><td>Description</td></tr><tr><td>id</td><td>String</td><td>item id</td></tr><tr><td>name</td><td>String</td><td>ชื่อสินค้า</td></tr><tr><td>qty</td><td>Number</td><td>ปริมาณสินค้า</td></tr></table>
 
 #### Request example
@@ -147,7 +147,7 @@ items | Array   |  items ที่จะทำการบรรจุประ�
 ```json
 {
   "error": {
-	  "message": "Packaging at least 1 required."
+      "message": "Packaging at least 1 required."
   }
 }
 ```
@@ -196,7 +196,7 @@ http://192.168.1.14:2908/ext/packs/EP983005467TH
 ```json
 {
   "error": {
-	  "message": "Data not found"
+      "message": "Data not found"
   }
 }
 ```
