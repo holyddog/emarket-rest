@@ -5,6 +5,7 @@
 npm run start
 ```
 ## Developement mode
-* Terminal 1: ```npm run dev```
-* Wait for the build to finish
-* Terminal 2: ```npm run grunt```
+* Step 1: ```npm install```
+* Step 2: ```npm run grunt```
+* Step 3: ```npm install nodemon -g```
+* Step 4: ```npm run dev```
