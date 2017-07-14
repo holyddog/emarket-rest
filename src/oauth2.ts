@@ -195,7 +195,7 @@ export class OAuth2 {
                 });
             });
         }));
-
+        
         app.use('/api/oauth/token', [
             passport.authenticate(['basic', 'oauth2-client-password'], { session: false }),
             aserver.token(),
