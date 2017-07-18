@@ -14,6 +14,7 @@ import { Config } from './config';
 import { OAuth2 } from './oauth2';
 
 import { UserApi } from './api/user.api';
+import { ShopApi } from './api/shop.api';
 import { ItemApi } from './api/item.api';
 import { CategoryApi } from './api/category.api';
 import { AddressApi } from './api/address.api';
@@ -47,24 +48,36 @@ export class Server {
             db.collection('packs').createIndex('ono', { name: 'order_fk' });
             db.collection('packs').createIndex('bcode', { name: 'barcode', unique: true });
 
+            db.collection('shops').createIndex('id', { name: 'pk', unique: true });
+            db.collection('shops').createIndex('uid', { name: 'user_fk' });
+
+            db.collection('addresses').createIndex('id', { name: 'pk', unique: true });
+            db.collection('addresses').createIndex('uid', { name: 'user_fk' });
+            db.collection('addresses').createIndex('sid', { name: 'shop_fk' });
+
             this.api(db);
         });
     }
 
     private authenticate(req, res, next) {
-        passport.authenticate('bearer', { session: false }, function (err, user, info) {
+        passport.authenticate('bearer', { session: false }, function (err, data, info) {
             if (err) {
                 res.json({
                     error: err
                 });
             }
-            else if (user === false) {
+            else if (!data.user) {
                 res.json({
                     error: { message: 'Unauthorized.' }
                 });
             }
             else {
-                req['user'] = user;
+                req['user'] = data.user;
+
+                if (data.shop) {
+                    req['shop'] = data.shop;
+                }
+
                 next();
             }
         })(req, res, next);
@@ -78,6 +91,7 @@ export class Server {
         let category = new CategoryApi(db);
         let address = new AddressApi(db);
         let order = new OrderApi(db);
+        let shop = new ShopApi(db);
         let orderIntf = new OrderInterfaceApi(db);
 
         app.get('/version', (req, res) => {
@@ -93,6 +107,10 @@ export class Server {
         });
         app.get('/users/:id', this.authenticate, (req, res) => {
             user.findById(req, res);
+        });
+
+        app.post('/shop', this.authenticate, (req, res) => {
+            shop.create(req, res);
         });
 
         app.post('/signin', (req, res) => {
@@ -138,6 +156,19 @@ export class Server {
         
         app.get('/addresses', this.authenticate, (req, res) => {
             address.findAll(req, res);
+        });
+        app.get('/addresses/:id', this.authenticate, (req, res) => {
+            address.findById(req, res);
+        });
+        app.post('/addresses', this.authenticate, (req, res) => {
+            address.create(req, res);
+        });
+        app.put('/addresses/:id', this.authenticate, (req, res) => {
+            address.update(req, res);
+        });
+
+        app.get('/provinces', (req, res) => {
+            address.findProvinces(req, res);
         });
 
         let server = app.listen(Config.Port, () => {

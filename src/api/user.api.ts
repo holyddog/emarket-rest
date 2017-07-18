@@ -8,11 +8,13 @@ import { ErrorModel } from '../models/error.model';
 
 export class UserApi {
     private users: mongodb.Collection;
+    private shops: mongodb.Collection;
     private db: mongodb.Db;
 
     constructor(db: mongodb.Db) {
         this.db = db;
         this.users = db.collection('users');
+        this.shops = db.collection('shops');
     }
 
     me(req, res) {
@@ -47,6 +49,15 @@ export class UserApi {
                         }
                     }).then((httpResponse) => {
                         user.token = httpResponse.access_token;
+                        return this.shops.findOne({ uid: user.id });
+                    }).then((shop) => {
+                        if (shop) {
+                            user.shop = {
+                                id: shop.id,
+                                name: shop.name,
+                                url: shop.url
+                            };
+                        }
                         res.json(user);
                     }).catch((err) => {
                         if (err.statusCode == 401) {

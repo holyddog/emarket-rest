@@ -22,6 +22,7 @@ export class OAuth2 {
         var dbAccessTokens = db.collection('access_tokens');
         var dbRefreshTokens = db.collection('refresh_tokens');
         var dbUsers = db.collection('users');
+        var dbShops = db.collection('shops');
 
         // var expires = 1;
 
@@ -86,7 +87,13 @@ export class OAuth2 {
                         }
 
                         var info = { scope: '*' };
-                        done(null, user, info);
+
+                        dbShops.findOne({ uid: token.u_id }, function(err, shop) {
+                            done(null, {
+                                user: user,
+                                shop: shop 
+                            }, info);
+                        });
                     });
                 });
             }
